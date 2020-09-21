@@ -83,6 +83,37 @@ def restart():
 """ Running the LEBench tests for the current kernel version.
 """
 def run_bench():
+    
+    KERN_INDEX_FILE  = '/iteration' 
+    LOCAL_GRUB_FILE  = '/grub'
+    KERN_LIST_FILE   = '/kern_list' 
+    RESULT_DIR       = '/RESULT_DIR/'
+    TEST_DIR         = '/TEST_DIR/'
+    TEST_NAME        = 'OS_Eval'
+    
+    try:
+        WORKING_DIR = os.environ['LEBENCH_DIR']
+    except:
+        raise ValueError('$LEBENCH_DIR is not set. Example: "/home/username/LEBench/".')
+
+    if 'LEBench' not in WORKING_DIR:
+        raise ValueError('$LEBENCH_DIR should point to the directory containing LEBench. Example: "/home/username/LEBench/".')
+
+    KERN_INDEX_FILE = WORKING_DIR + KERN_INDEX_FILE
+    LOCAL_GRUB_FILE = WORKING_DIR + LOCAL_GRUB_FILE
+    KERN_LIST_FILE  = WORKING_DIR + KERN_LIST_FILE
+    RESULT_DIR      = WORKING_DIR + RESULT_DIR
+    TEST_DIR        = WORKING_DIR + TEST_DIR
+
+    if not os.path.exists(KERN_LIST_FILE):
+        raise IOError('Cannot open "kern_list" file. If it\'s not present, '
+                'run "get_kern.py" to generate this file by grepping all install kernels.')
+
+    with open(KERN_LIST_FILE, 'r') as fp:
+        lines = fp.readlines()
+        if len(lines) == 0:
+            raise ValueError('"kern_list" file is empty, '
+                'run "get_kern.py" to generate this file by grepping all install kernels.')
 
     print('[INFO] --------------------------------------------------')
     print('[INFO]              Starting LEBench tests')

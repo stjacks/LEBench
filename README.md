@@ -1,3 +1,7 @@
+Modified version of LEBench for use in CS 736, Advanced Operating Systems at UW-Madison.
+
+----------
+
 run "crontab -e" and add the following entries:
 
 LEBENCH_DIR=<path>/LEBench/
