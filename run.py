@@ -105,15 +105,15 @@ def run_bench():
     RESULT_DIR      = WORKING_DIR + RESULT_DIR
     TEST_DIR        = WORKING_DIR + TEST_DIR
 
-    if not os.path.exists(KERN_LIST_FILE):
-        raise IOError('Cannot open "kern_list" file. If it\'s not present, '
-                'run "get_kern.py" to generate this file by grepping all install kernels.')
+#    if not os.path.exists(KERN_LIST_FILE):
+#        raise IOError('Cannot open "kern_list" file. If it\'s not present, '
+#                'run "get_kern.py" to generate this file by grepping all install kernels.')
 
-    with open(KERN_LIST_FILE, 'r') as fp:
-        lines = fp.readlines()
-        if len(lines) == 0:
-            raise ValueError('"kern_list" file is empty, '
-                'run "get_kern.py" to generate this file by grepping all install kernels.')
+#    with open(KERN_LIST_FILE, 'r') as fp:
+#        lines = fp.readlines()
+#        if len(lines) == 0:
+#            raise ValueError('"kern_list" file is empty, '
+#                'run "get_kern.py" to generate this file by grepping all install kernels.')
 
     print('[INFO] --------------------------------------------------')
     print('[INFO]              Starting LEBench tests')
