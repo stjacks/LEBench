@@ -12,13 +12,13 @@ DEBUG            = True
 GRUB_CFG_FILE    = '/boot/grub/grub.cfg'
 GRUB_FILE        = '/etc/default/grub' 
 
-WORKING_DIR      = ''
-KERN_INDEX_FILE  = '/iteration' 
-LOCAL_GRUB_FILE  = '/grub'
-KERN_LIST_FILE   = '/kern_list' 
-RESULT_DIR       = '/RESULT_DIR/'
-TEST_DIR         = '/TEST_DIR/'
-TEST_NAME        = 'OS_Eval'
+WORKING_DIR      = '/mydata/LEBench'
+KERN_INDEX_FILE  = WORKING_DIR + '/iteration' 
+LOCAL_GRUB_FILE  = WORKING_DIR + '/grub'
+KERN_LIST_FILE   = WORKING_DIR + '/kern_list' 
+RESULT_DIR       = WORKING_DIR + '/RESULT_DIR/'
+TEST_DIR         = WORKING_DIR + '/TEST_DIR/'
+TEST_NAME        = WORKING_DIR + '/OS_Eval'
 
 
 """ Grabs the ith kernel from KERN_LIST_FILE.
@@ -201,6 +201,11 @@ if __name__ == '__main__':
         kern_idx = int(f.read())
     next_kern_idx = kern_idx + 1
     if DEBUG: print('[DEBUG] Running at kernel index: ' + str(kern_idx))
+
+    print(get_kern_list(0))
+    print(get_kern_list(1))
+    print(get_kern_list(2))
+    sys.exit(0)
     
     with open(KERN_INDEX_FILE, 'w') as fp:
         fp.write(str(next_kern_idx).strip())
@@ -221,3 +226,41 @@ if __name__ == '__main__':
         restart()
 
 
+def stj_grub(next_kern_idx):
+
+    # Setting up working directory and sanity checks.
+    if not os.geteuid() == 0:
+        raise Exception('This script should be run with "sudo".')
+
+    if 'LEBench' not in WORKING_DIR:
+        raise ValueError('$LEBENCH_DIR should point to the directory containing LEBench. Example: "/home/username/LEBench/".')
+    
+    
+    GRUB_CFG_FILE    = '/boot/grub/grub.cfg'
+    GRUB_FILE        = '/etc/default/grub' 
+
+    KERN_INDEX_FILE  = '/iteration' 
+    LOCAL_GRUB_FILE  = '/grub'
+    KERN_LIST_FILE   = '/kern_list' 
+    RESULT_DIR       = '/RESULT_DIR/'
+    TEST_DIR         = '/TEST_DIR/'
+    TEST_NAME        = 'OS_Eval'
+
+
+    KERN_INDEX_FILE = WORKING_DIR + KERN_INDEX_FILE
+    LOCAL_GRUB_FILE = WORKING_DIR + LOCAL_GRUB_FILE
+    KERN_LIST_FILE  = WORKING_DIR + KERN_LIST_FILE
+    RESULT_DIR      = WORKING_DIR + RESULT_DIR
+    TEST_DIR        = WORKING_DIR + TEST_DIR
+
+    print(KERN_LIST_FILE)
+    print(WORKING_DIR)
+    
+    if not os.path.exists(KERN_LIST_FILE):
+        raise IOError('Cannot open "kern_list" file. If it\'s not present, '
+                      'run "get_kern.py" to generate this file by grepping all install kernels.')
+    
+    if generate_grub_file(WORKING_DIR + '/template/grub', get_kern_list(next_kern_idx)):
+        install_grub_file()
+        if DEBUG: print('[DEBUG] Done configuring grub for the next kernel.')
+        restart()
